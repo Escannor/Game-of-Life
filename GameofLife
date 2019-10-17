@@ -1,0 +1,85 @@
+
+#!The board game is on a toroide
+#TODO Cualquier celda viva con menos de dos vecinos vivos muere, como si estuviera causada por la población insuficiente.    
+#TODO Cualquier célula viva con dos o tres vecinos vivos vive para la próxima generación.
+#TODO Cualquier celda viva con más de tres vecinos vivos muere, como por sobrepoblación.
+#TODO Cualquier celda muerta con exactamente tres vecinos vivos se convierte en una célula viva, como por reproducción..
+
+import numpy as np
+
+def imprimematriz(matriz):
+    for i in range( len(matriz) ):
+        output=''
+        for j in range( len(matriz[i]) ):
+            output = output + str( matriz[i,j] )
+        print(output)
+
+
+def gameoflife(m, cic):
+    lista = [-1,0,1]
+    
+    for ciclos in range(cic):
+        
+        mc = np.copy(m)
+        for i in range( len(m) ):
+            for j in range( len(m[i]) ):
+                contador = 0
+
+                for x in lista:
+                    for y in lista:
+                        r = i + x
+                        c = j + y
+                        if (r > (len(m) - 1)):  
+                            r = 0
+                        if (c > (len(m[i]) - 1)):
+                            c = 0
+                        
+                        if ( (r != i) or (c != j)):
+                            #?print("entra cond1")
+                            if ( m[r,c] == '*'):
+                                contador += 1
+                        #?print(r,c,"m:",m[r,c],"cont:",contador)
+                    if (contador == 4):
+                        break
+                if (contador == 4):
+                    break
+
+                #print("m",m[i,j],i,j,contador)
+                #print()
+                if (m[i,j] == '*'):
+                    if (contador < 2):
+                        mc[i,j] = '-'
+                        break
+                    if ( (contador == 2) or (contador == 3) ):
+                        #? m[i,j] = '*'   trivial
+                        mc[i,j] = '*'
+                        break
+                    if (contador > 3):
+                        mc[i,j] = '-'
+                if ( (m[i,j] == '-') and (contador == 3)):
+                    mc[i,j] = '*'
+
+        m = np.copy(mc)
+
+        #imprimematriz(m)   #! Quitar despues
+                
+    return m
+
+data = list(input().split(' '))
+n = int(data[0])
+m = int(data[1])
+ciclos = int(data[2])
+
+#print(f'{n} {m} {c}')
+
+toroide = np.empty((n ,m),dtype=str)
+
+for r in range(n):
+    cad = input()
+    for c in range(len(cad)):
+        toroide[r,c] = cad[c] 
+
+#print(toroide)
+toroide = gameoflife(toroide,ciclos)
+
+imprimematriz(toroide)
